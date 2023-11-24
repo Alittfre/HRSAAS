@@ -69,6 +69,7 @@
 
 <script>
 import { validMobile } from '@/utils/validate'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Login',
@@ -79,7 +80,7 @@ export default {
     return {
       loginForm: {
         mobile: '13800000002',
-        password: '123456'
+        password: '888itcast.CN764%...'
       },
       loginRules: {
         mobile: [
@@ -88,7 +89,7 @@ export default {
         ],
         password: [
           { required: true, trigger: 'blur', message: '密码不能为空' },
-          { min: 6, max: 16, message: '密码的长度在6-16位之间 ', trigger: 'blur' }
+          { min: 6, max: 20, message: '密码的长度在6-20位之间 ', trigger: 'blur' }
         ]
       },
       loading: false,
@@ -105,6 +106,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['user/login']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -116,21 +118,17 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.$store
-            .dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          console.log('error submit!!')
-          return false
+      this.$refs.loginForm.validate(async isOK => {
+        if (isOK) {
+          try {
+            this.loading = true
+            await this['user/login'](this.loginForm)
+            this.$router.push('/')
+          } catch (error) {
+            console.log(error)
+          } finally {
+            this.loading = false
+          }
         }
       })
     }
