@@ -12,7 +12,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="staffPhoto" class="user-avatar">
+          <img v-imgerror="defaultImg" src="" class="user-avatar">
           <span class="name">管理员</span>
           <i class="el-icon-caret-bottom" style="color: #fff" />
         </div>
@@ -39,6 +39,11 @@ import Hamburger from '@/components/Hamburger'
 export default {
   components: {
     Hamburger
+  },
+  data() {
+    return {
+      defaultImg: require('@/assets/common/head.jpg')
+    }
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'staffPhoto'])
