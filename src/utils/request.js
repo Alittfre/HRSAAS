@@ -6,8 +6,9 @@ import router from '@/router'
 const TimeOut = 3600
 const service = Axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 5000
+  timeout: 10000
 })
+
 service.interceptors.request.use(config => {
   if (store.getters.token) {
     if (IsTimeOut()) {
@@ -21,6 +22,7 @@ service.interceptors.request.use(config => {
 }, error => {
   return Promise.reject(error)
 })
+
 service.interceptors.response.use(response => {
   const { success, message, data } = response.data
   if (success) {
