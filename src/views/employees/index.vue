@@ -67,6 +67,7 @@
         </el-row>
       </el-card>
     </div>
+    <!-- sync修饰符 子修改父 -->
     <add-employee :show-dialog.sync="showDialog" />
   </div>
 </template>
@@ -79,6 +80,7 @@ export default {
   components: { addEmployee },
   data() {
     return {
+      EmployeeEnum,
       list: [],
       page: {
         page: 1,
@@ -86,7 +88,9 @@ export default {
         total: 0
       },
       loading: false,
-      showDialog: false
+      showDialog: false,
+      treeData: [],
+      showTree: false
     }
   },
   created() {

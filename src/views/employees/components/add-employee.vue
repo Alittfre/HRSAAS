@@ -29,6 +29,12 @@
           style="width: 50%"
           placeholder="请选择"
         />
+        <el-option
+          v-for="item in EmployeeEnum.hireType"
+          :key="item.id"
+          :label="item.value"
+          :value="item.id"
+        />
       </el-form-item>
       <el-form-item label="工号" prop="workNumber">
         <el-input
@@ -42,6 +48,13 @@
           v-model="formData.departmentName"
           style="width: 50%"
           placeholder="请选择部门"
+        />
+        <el-tree
+          v-if="showTree"
+          v-loading="loading"
+          :data="treeData"
+          :props="{ label: 'name' }"
+          @node-click="selectNode"
         />
       </el-form-item>
       <el-form-item label="转正时间" prop="correctionTime">
@@ -65,6 +78,10 @@
 </template>
 
 <script>
+import EmployeeEnum from '@/api/constant/employees'
+import { getDepartments } from '@/api/departments'
+import { addEmployee } from '@/api/employees'
+import { tranListToTreeData } from '@/utils'
 export default {
   props: {
     showDialog: {
@@ -74,6 +91,7 @@ export default {
   },
   data() {
     return {
+      EmployeeEnum,
       formData: {
         username: '',
         mobile: '',
@@ -83,6 +101,8 @@ export default {
         timeOfEntry: '',
         correctionTime: ''
       },
+      showTree: false,
+      loading: false,
       rules: {
         username: [
           { required: true, message: '用户姓名不能为空', trigger: 'blur' },
@@ -111,6 +131,42 @@ export default {
         ],
         timeOfEntry: [{ required: true, message: '入职时间', trigger: 'blur' }]
       }
+    }
+  },
+  methods: {
+    async getDepartments() {
+      this.showTree = true
+      this.loading = true
+      const { depts } = await getDepartments()
+      this.treeData = tranListToTreeData(depts, '')
+      this.loading = false
+    },
+    selectNode(node) {
+      this.formData.departmentName = node.name
+      this.showTree = false
+    },
+    async btnOK() {
+      try {
+        await this.$refs.addEmployee.validate()
+        await addEmployee(this.formData)
+        this.$parent.getEmployeeList()
+        this.$parent.showDialog = false
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    btnCancel() {
+      this.formData = {
+        username: '',
+        mobile: '',
+        formOfEmployment: '',
+        workNumber: '',
+        departmentName: '',
+        timeOfEntry: '',
+        correctionTime: ''
+      }
+      this.$refs.addEmployee.resetFields()
+      this.$emit('update: showDialog', false)
     }
   }
 }
