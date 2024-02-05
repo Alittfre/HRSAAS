@@ -12,3 +12,18 @@ export function getEmployeeList(params) {
     params
   })
 }
+
+export function delEmployee(id) {
+  return request({
+    method: 'delete',
+    url: `/sys/users/${id}`
+  })
+}
+
+export function addEmployee(data) {
+  return request({
+    method: 'post',
+    url: '/sys/user',
+    data
+  })
+}
