@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import * as XLSX from 'xlsx/xlsx.mjs'
+import XLSX from 'xlsx'
 
 export default {
   props: {

@@ -1,5 +1,6 @@
 import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 import { login, getUserInfo, getUserDetailById } from '@/api/user'
+import { resetRouter } from '@/router'
 const state = {
   token: getToken(),
   userInfo: {}
@@ -13,8 +14,8 @@ const mutations = {
     state.token = null
     removeToken()
   },
-  setUserInfo(state, userInfo) {
-    state.userInfo = { ...userInfo }
+  setUserInfo(state, result) {
+    state.userInfo = result
   },
   removeUserInfo(state) {
     state.userInfo = {}
@@ -29,13 +30,14 @@ const actions = {
   async getUserInfo(context) {
     const result = await getUserInfo()
     const baseInfo = await getUserDetailById(result.userId)
-    const baseResult = { ...result, ...baseInfo }
-    context.commit('setUserInfo', baseResult)
-    return baseResult
+    context.commit('setUserInfo', { ...result, ...baseInfo })
+    return result
   },
-  async logout(context) {
+  logout(context) {
     context.commit('removeToken')
     context.commit('removeUserInfo')
+    resetRouter()
+    context.commit('permission/setRoutes', [], { root: true })
   }
 }
 export default {

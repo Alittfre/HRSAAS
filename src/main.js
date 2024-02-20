@@ -23,8 +23,12 @@ import * as filters from '@/filters'
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+import checkPermission from '@/mixin/checkPermission'
+Vue.mixin(checkPermission)
 import Component from '@/components'
 Vue.use(Component)
+import print from 'vue-print-nb'
+Vue.use(print)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
